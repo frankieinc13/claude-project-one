@@ -29,10 +29,6 @@ projects/*/*
 # User's personal skills
 !skills/
 !skills/**
-# Secrets inside skills — never commit
-skills/**/credentials.env
-skills/**/token.pickle
-skills/**/google_credentials.json
 # User's personal slash commands
 !commands/
 !commands/**
@@ -45,3 +41,5 @@ skills/**/google_credentials.json
 # User-level cursor rules
 !rules/
 !rules/**
+# Cursor MCP server configuration
+!mcp.json
