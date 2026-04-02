@@ -2,11 +2,13 @@
   "courses": [
     {
       "name": "Business Law",
-      "nav_keyword": "Business Law"
+      "nav_keyword": "Legal Environment of Business",
+      "section_id": "153531117"
     },
     {
       "name": "Business Strategies",
-      "nav_keyword": "Business Strategies"
+      "nav_keyword": "Rothaermel Strategic Management",
+      "section_id": "145520378"
     }
   ]
 }
