@@ -29,6 +29,9 @@ projects/*/*
 # User's personal skills
 !skills/
 !skills/**
+# Never commit credentials
+skills/**/credentials.env
+skills/**/*.env
 # User's personal slash commands
 !commands/
 !commands/**
@@ -41,5 +44,3 @@ projects/*/*
 # User-level cursor rules
 !rules/
 !rules/**
-# Cursor MCP server configuration
-!mcp.json
