@@ -1,60 +1,98 @@
 ---
 name: mcgraw-hill-study
-description: Automates McGraw Hill Connect practice assignments for Business Law and Business Strategies. Answers multiple choice, fill-in-the-blank, and matching questions using Claude, then saves a complete answer key and study guide as a Word document. Can be run manually or on a schedule via Windows Task Scheduler.
+description: Automates McGraw Hill Connect SmartBook assignments using the Playwright MCP. Navigates to the course, opens a SmartBook assignment, answers every question using Claude's reasoning, and saves a Word document answer key. Trigger when user says "do my McGraw Hill", "run SmartBook", or "answer Connect assignment".
 ---
 
 # McGraw Hill Study Agent
 
-Automates practice assignments on McGraw Hill Connect and saves answer keys + study guides as Word documents.
+You are an automation agent. Use the Playwright MCP browser tools to complete a McGraw Hill Connect SmartBook assignment, then save an answer key as a Word document.
 
-## One-time setup required
+## Credentials
 
-Edit `credentials.env` with your real values:
+Load from `skills/mcgraw-hill-study/credentials.env`:
+- `MCGRAW_EMAIL` — login email
+- `MCGRAW_PASSWORD` — login password
+
+Read the file directly; do not use subprocess or dotenv.
+
+## Step-by-step instructions
+
+### 1. Launch browser
 ```
-MCGRAW_EMAIL=your_email@example.com
-MCGRAW_PASSWORD=your_password
-ANTHROPIC_API_KEY=sk-ant-...
+browser_navigate: https://connect.mheducation.com
 ```
 
-Your Anthropic API key is at https://console.anthropic.com → API Keys.
+### 2. Log in
+- Wait for the page to load, take a snapshot
+- Fill `#login-email` with the email
+- Fill `#login-password` with the password
+- Click the submit button
+- Wait for dashboard to load (take snapshot to confirm)
 
-That's it — no Google setup needed.
+### 3. Navigate to course
+Go directly to the section URL from config.json:
+- Business Law: `https://newconnect.mheducation.com/student/class/section/153531117`
+- Business Strategies: `https://newconnect.mheducation.com/student/class/section/145520378`
 
-## Running manually
+### 4. Find and open assignment
+- Take a snapshot of the assignments list
+- Find the target assignment (user will specify, or pick the first incomplete SmartBook)
+- Click its launch button (look for `[data-automation-id^="launch-btn"]` elements)
+- In the side panel that opens, click "Continue" or "Begin"
+- If a new tab opens with `learning.mheducation.com`, switch to it
+- Click "Start Questions" or "Continue Questions" if present
+- Dismiss any "Got it" tip modals
+
+### 5. Answer questions in a loop
+
+For each question:
+
+1. **Take a snapshot** — read the full page text
+2. **Identify question type** from text:
+   - "Multiple Select Question" → select all correct options
+   - "Multiple Choice Question" → select one option
+   - "True or False Question" → True or False
+   - "Fill in" / "type the" → fill blank
+3. **Read the question text and all option labels**
+4. **Reason about the correct answer** using your knowledge of the subject (Business Law or Business Strategies)
+5. **Click the correct answer(s)** using label elements
+6. **Click "High"** (confidence) to submit
+7. **Take a snapshot** to read feedback — note if correct and what the correct answer was
+8. **Record**: question text, your answer, correct answer, brief explanation
+9. **Click "Next"** to advance
+10. **Repeat** until no more question text is visible (assignment complete)
+
+**Loop exit conditions:**
+- Page shows completion message
+- No question text found after 3 consecutive snapshots
+- Same question text seen 3 times in a row (stuck) — click Next and continue
+
+### 6. Save answer key
+
+After collecting all questions and answers, call Python to write the Word doc:
 
 ```bash
-# From this directory:
-python agent.py "Business Law"
-python agent.py "Business Strategies"
-python agent.py "Business Law" --assignment "Chapter 4"
-python agent.py "Business Law" --headless   # no visible browser window
-
-# Or double-click run.bat and follow the prompts
+cd C:/Users/Owner/.cursor/skills/mcgraw-hill-study
+python word_writer_cli.py "<subject>" "<assignment_name>" "<json_data>"
 ```
 
-## Scheduling (Windows Task Scheduler)
-
-Edit `schedule_task.bat` to set your desired course, day, and time, then right-click → **Run as administrator**.
-
-To manage existing tasks:
-```bat
-schtasks /query /tn "McGrawHillStudyAgent_Business_Law"
-schtasks /delete /tn "McGrawHillStudyAgent_Business_Law" /f
+Where `<json_data>` is a JSON array of objects:
+```json
+[{"question": "...", "type": "...", "correct_answer": "...", "explanation": "..."}]
 ```
 
-## Output
+### 7. Report to user
 
-Each assignment produces a Word document saved to:
-```
-skills/mcgraw-hill-study/output/Business Law - [Assignment Name].docx
-```
+Print a summary:
+- Assignment name
+- Number of questions answered
+- Path to saved Word doc
+- Any questions that were skipped or uncertain
 
-The doc contains:
-- **Answer Key** — every question with the correct answer and a brief explanation
-- **Study Guide** — key concepts, terms, rules, and common mistakes
+## Notes
 
-## Troubleshooting
-
-- If login fails: check credentials.env
-- If no assignments are found: a `debug_assignments.png` screenshot is saved in this folder
-- If question selectors break after a Connect update: inspect the page and update the CSS selectors in `mcgraw_connect.py`
+- Always take a snapshot before deciding what to click — don't guess selectors
+- If a click doesn't work, try clicking the parent element or use a more specific selector from the snapshot
+- SmartBook re-queues wrong answers, so reason carefully before selecting
+- The confidence buttons are labeled "High", "Medium", "Low" — always click "High"
+- If you get stuck on a page, take a screenshot and report the URL to the user
