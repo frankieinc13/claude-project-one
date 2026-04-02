@@ -1,15 +1,14 @@
 ---
 name: mcgraw-hill-study
-description: Automates McGraw Hill Connect practice assignments for Business Law and Business Strategies. Answers multiple choice, fill-in-the-blank, and matching questions using Claude, then saves a complete answer key and study guide to Google Docs. Can be run manually or on a schedule via Windows Task Scheduler.
+description: Automates McGraw Hill Connect practice assignments for Business Law and Business Strategies. Answers multiple choice, fill-in-the-blank, and matching questions using Claude, then saves a complete answer key and study guide as a Word document. Can be run manually or on a schedule via Windows Task Scheduler.
 ---
 
 # McGraw Hill Study Agent
 
-Automates practice assignments on McGraw Hill Connect and saves answer keys + study guides to Google Docs.
+Automates practice assignments on McGraw Hill Connect and saves answer keys + study guides as Word documents.
 
 ## One-time setup required
 
-### 1. Fill in credentials
 Edit `credentials.env` with your real values:
 ```
 MCGRAW_EMAIL=your_email@example.com
@@ -17,18 +16,9 @@ MCGRAW_PASSWORD=your_password
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-### 2. Set up Google OAuth (one-time)
-1. Go to https://console.cloud.google.com
-2. Create a new project (name it anything)
-3. Go to **APIs & Services → Library** → enable:
-   - **Google Docs API**
-   - **Google Drive API**
-4. Go to **APIs & Services → Credentials → Create Credentials → OAuth client ID**
-5. Application type: **Desktop app**
-6. Download the JSON and save it as `google_credentials.json` in this folder
-7. Go to **APIs & Services → OAuth consent screen** → set to **External** → add your Google account as a test user
+Your Anthropic API key is at https://console.anthropic.com → API Keys.
 
-On the first run, a browser window will open for you to authorize. After that, a `token.pickle` is cached and it never asks again.
+That's it — no Google setup needed.
 
 ## Running manually
 
@@ -54,9 +44,9 @@ schtasks /delete /tn "McGrawHillStudyAgent_Business_Law" /f
 
 ## Output
 
-Each assignment produces a Google Doc in your Drive root titled:
+Each assignment produces a Word document saved to:
 ```
-McGraw Hill — Business Law — [Assignment Name]
+skills/mcgraw-hill-study/output/Business Law - [Assignment Name].docx
 ```
 
 The doc contains:

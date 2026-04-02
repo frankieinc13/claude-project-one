@@ -21,7 +21,7 @@ load_dotenv(Path(__file__).parent / "credentials.env")
 
 from mcgraw_connect import McGrawHillConnect
 from answer_engine import AnswerEngine
-from gdocs_writer import GoogleDocsWriter
+import word_writer
 
 SKILL_DIR = Path(__file__).parent
 
@@ -61,16 +61,9 @@ def run(course_keyword: str, assignment_filter: str | None, headless: bool):
         print(f"  Filter: {assignment_filter}")
     print(f"{'='*60}\n")
 
+    output_dir = SKILL_DIR / "output"
     bot = McGrawHillConnect(headless=headless)
     engine = AnswerEngine(api_key)
-    writer = GoogleDocsWriter(
-        credentials_path=str(SKILL_DIR / "google_credentials.json"),
-        token_path=str(SKILL_DIR / "token.pickle"),
-    )
-
-    print("Authenticating with Google Docs...")
-    writer.authenticate()
-    print("Google Docs: ready\n")
 
     try:
         bot.start()
@@ -180,10 +173,9 @@ def run(course_keyword: str, assignment_filter: str | None, headless: bool):
             print(f"\n  Generating study guide ({len(questions_answers)} questions)...")
             study_guide = engine.generate_study_guide(questions_answers, subject, name)
 
-            print("  Saving to Google Docs...")
-            doc_id = writer.find_or_create_doc(subject, name)
-            url = writer.write_answer_key(doc_id, subject, name, questions_answers, study_guide)
-            print(f"  Saved: {url}\n")
+            print("  Saving to Word doc...")
+            filepath = word_writer.write_answer_key(output_dir, subject, name, questions_answers, study_guide)
+            print(f"  Saved: {filepath}\n")
 
     finally:
         bot.stop()
@@ -193,7 +185,7 @@ def run(course_keyword: str, assignment_filter: str | None, headless: bool):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="McGraw Hill Connect practice agent — answers questions and saves study guide to Google Docs"
+        description="McGraw Hill Connect practice agent — answers questions and saves study guide to a Word doc"
     )
     parser.add_argument("course", nargs="?", help='Course name, e.g. "Business Law"')
     parser.add_argument(
