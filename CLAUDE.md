@@ -10,14 +10,25 @@ GitHub remote: `frankieinc13/claude-project-one`
 
 ## Git Workflow
 
-After any meaningful change, commit and push:
+**Commit and push to GitHub regularly throughout all work** — after every meaningful unit of progress (new file, config change, skill added, anything non-trivial). Never let significant work accumulate uncommitted. This ensures nothing is lost and the history can always be rolled back to a known-good state.
 
 ```bash
 cd C:/Users/Owner/.cursor
-git add <files>
-git commit -m "description"
+git add <specific files>
+git commit -m "short description of what changed and why"
 git push
 ```
+
+### Commit message rules
+- Use the imperative mood: "Add X", "Update Y", "Fix Z"
+- Be specific — describe what changed and why, not just "update files"
+- One logical change per commit; don't batch unrelated changes together
+
+### When to commit
+- After creating or modifying any skill, rule, or subagent
+- After any config change
+- After completing a task or a distinct step within a larger task
+- Before starting a risky or experimental change (so there's a safe rollback point)
 
 Git identity is configured locally:
 - `user.name`: frankieinc13
