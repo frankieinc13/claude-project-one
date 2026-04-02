@@ -1,0 +1,491 @@
+# SmartBook MCQ Solver — Fast-Chain Mode
+
+Answers McGraw-Hill SmartBook questions at maximum speed using a single
+chained JavaScript call per question: **read → select → High confidence →
+Next**, no screenshots, no verification pauses between questions.
+
+At the end, output a compact answer-key table — answers only, no question
+re-statement.
+
+---
+
+## Step 0 — Access McGraw-Hill Connect
+
+### 0a — Get the active tab
+
+```javascript
+// Use tabs_context_mcp to get the current tab group.
+// If no group exists, create one with createIfEmpty: true.
+tabs_context_mcp({ createIfEmpty: true })
+```
+
+### 0b — Navigate to Connect and login
+
+#### 0b-i — Search for McGraw-Hill Connect login
+
+Type `mcgrawhill connect login` into the browser address/search bar and navigate:
+
+```javascript
+navigate(tabId, "mcgrawhill connect login")
+// Wait 3 seconds for search results to load
+```
+
+Click the **first search result link** that appears.
+
+Wait 3 seconds for the page to load, then check `document.title` and `location.href`.
+
+**Decision logic:**
+
+| Page title / URL | Situation | Action |
+|------------------|-----------|--------|
+| Contains "Connect Student UI" or dashboard visible | Already logged in | Go to Step 0c immediately |
+| Login page loaded | Credentials needed | Run Step 0b-ii (click red Sign In button) |
+
+#### 0b-ii — Trigger autofill via real user gesture, then submit
+
+Chrome's password manager only autofills after a real user interaction on the input fields. Use the `computer` tool to perform actual mouse clicks on the email and password fields — this triggers Chrome's native autofill. Then click the Sign In button.
+
+**Phase 1 — Trigger autofill with real mouse clicks**
+
+Use `computer` tool (mouse click) to:
+1. Click the email/username input field — wait 1.5 s for Chrome autofill dropdown to appear
+2. Press the **Down arrow key** once to select the saved credential from the dropdown, then press **Enter** to confirm — wait 1 s
+3. If the password field is not auto-populated after step 2, click the password field and repeat the Down + Enter gesture — wait 1 s
+
+> **Do not type anything.** The goal is purely to simulate a real user click so Chrome injects saved credentials. If no autofill dropdown appears after clicking (field stays empty), fall through to Phase 2.
+
+**Phase 2 — Verify fields are populated**
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+  await d(800);
+  const emailField = document.querySelector('input[type="email"], input[name*="email"], input[name*="user"], input[id*="email"], input[id*="user"]');
+  const passField  = document.querySelector('input[type="password"]');
+  return JSON.stringify({
+    emailFilled: !!(emailField && emailField.value.length > 0),
+    passFilled:  !!(passField  && passField.value.length  > 0),
+    emailVal:    emailField ? emailField.value.substring(0, 30) : 'not found',
+  });
+})()
+```
+
+| Result | Action |
+|--------|--------|
+| Both `true` | Proceed to Phase 3 (click Sign In) |
+| Either `false` | Fields still empty — use `computer` tool to click each empty field once more, wait 2 s, re-run Phase 2 check; if still empty after 2 tries, take screenshot and ask user to click the email field themselves so Chrome autofill activates, then resume |
+
+**Phase 3 — Click Sign In and verify login (10-attempt retry loop)**
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+
+  function isLoggedIn() {
+    return (
+      document.title.toLowerCase().includes('connect') &&
+      !location.href.includes('accounts.mheducation')
+    ) || document.title.toLowerCase().includes('connect student ui');
+  }
+
+  function findRedSignInBtn() {
+    const byText = [...document.querySelectorAll('button, input[type="submit"]')]
+      .find(b =>
+        b.innerText?.toLowerCase().includes('sign in') ||
+        b.value?.toLowerCase().includes('sign in')
+      );
+    if (byText) return byText;
+
+    const byRole = [...document.querySelectorAll('[role="button"]')]
+      .find(b => b.innerText?.toLowerCase().includes('sign in'));
+    if (byRole) return byRole;
+
+    const byAnchor = [...document.querySelectorAll('a')]
+      .find(a => a.innerText?.toLowerCase().includes('sign in'));
+    if (byAnchor) return byAnchor;
+
+    const byAttr = document.querySelector(
+      '[data-testid*="sign"], [id*="signin"], [id*="login"], [class*="signin"], [class*="login-btn"]'
+    );
+    if (byAttr) return byAttr;
+
+    return null;
+  }
+
+  await d(1000);
+
+  let attempt = 0;
+  const MAX = 10;
+
+  while (attempt < MAX) {
+    attempt++;
+
+    if (isLoggedIn()) {
+      return JSON.stringify({ status: 'logged_in', attempt, title: document.title, url: location.href });
+    }
+
+    const btn = findRedSignInBtn();
+
+    if (btn) {
+      try {
+        btn.click();
+      } catch (e) {
+        btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+      }
+    } else {
+      window.scrollBy(0, 300);
+    }
+
+    const waitMs = attempt <= 3 ? 3000 : attempt <= 6 ? 4000 : 5000;
+    await d(waitMs);
+
+    if (isLoggedIn()) {
+      return JSON.stringify({ status: 'logged_in', attempt, title: document.title, url: location.href });
+    }
+  }
+
+  return JSON.stringify({
+    status: 'failed_after_10_attempts',
+    title: document.title,
+    url: location.href,
+    bodySnippet: document.body.innerText.substring(0, 600)
+  });
+})()
+```
+
+**Interpreting the result:**
+
+| `status` | Next action |
+|----------|-------------|
+| `"logged_in"` | Proceed to Step 0c immediately |
+| `"failed_after_10_attempts"` | Check `bodySnippet` — if CAPTCHA present, tell user once and wait; if the page shows a university SSO page, wait an extra 15 s and retry the whole loop once more; otherwise screenshot and report to user |
+
+> **Only stop for CAPTCHA or bot-detection.** If a CAPTCHA appears, tell the
+> user once: "A CAPTCHA appeared — please solve it and I'll continue." Resume
+> as soon as they confirm. For all other scenarios, retry automatically.
+
+---
+
+### 0c — Navigate to the assignment via Courses
+
+**CRITICAL: NEVER use the To-Do list. ALWAYS navigate via Courses.**
+
+#### 0c-i — Click "Courses" in the main navigation
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+  await d(1500);
+  const coursesLink = [...document.querySelectorAll('a, button, [role="link"], [role="menuitem"], nav *')]
+    .find(el =>
+      el.innerText?.trim().toLowerCase() === 'courses' ||
+      el.innerText?.trim().toLowerCase() === 'my courses'
+    );
+  if (coursesLink) {
+    coursesLink.click();
+  } else {
+    window.location.href = 'https://newconnect.mheducation.com/student/courses';
+  }
+  await d(2500);
+  return document.body.innerText.substring(0, 4000);
+})()
+```
+
+#### 0c-ii — Click the correct course
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+  const allLinks = [...document.querySelectorAll('a, button, [role="link"], [class*="course"], [class*="card"]')];
+  const target = allLinks.find(el => el.innerText?.toLowerCase().includes('<COURSE KEYWORD>'));
+  if (target) {
+    target.click();
+  } else {
+    return 'course not found — take screenshot and ask user';
+  }
+  await d(3000);
+  return document.body.innerText.substring(0, 4000);
+})()
+```
+
+Replace `<COURSE KEYWORD>` with a word from the course name (e.g. "law", "auditing", "accounting").
+
+#### 0c-iii — Find and click the assignment's blue arrow button (scroll if needed)
+
+> **CRITICAL: Always click the blue arrow button next to the assignment — NEVER click the assignment name/text link directly.**
+> The blue arrow is the correct launch button for SmartBook assignments. Clicking the assignment name may navigate to a summary page instead of launching questions.
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+
+  function findAssignmentRow(keyword) {
+    // Find the row/container that contains the assignment keyword
+    const rows = [...document.querySelectorAll(
+      '[role="row"], [class*="assignment"], [class*="activity"], li, tr, [class*="card"], [class*="row"]'
+    )];
+    return rows.find(el =>
+      el.innerText?.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }
+
+  function clickBlueArrowInRow(row) {
+    if (!row) return false;
+
+    // Strategy 1: look for a blue arrow SVG, icon, or button inside the row
+    const arrowBtn = [...row.querySelectorAll(
+      'button, a, [role="button"], [class*="arrow"], [class*="launch"], [class*="start"], [class*="go"], [class*="chevron"], [aria-label*="open"], [aria-label*="launch"], [aria-label*="start"], [aria-label*="begin"], [title*="open"], [title*="launch"], [title*="start"]'
+    )].find(el => {
+      const style = window.getComputedStyle(el);
+      const html  = el.outerHTML.toLowerCase();
+      // Prefer elements that look like a forward/right-pointing arrow or launch button
+      return (
+        html.includes('arrow') ||
+        html.includes('chevron') ||
+        html.includes('launch') ||
+        html.includes('start') ||
+        html.includes('go') ||
+        html.includes('svg') ||
+        html.includes('icon') ||
+        style.color.includes('rgb(0') ||   // blue tones
+        style.backgroundColor.includes('rgb(0')
+      );
+    });
+
+    if (arrowBtn) { arrowBtn.click(); return true; }
+
+    // Strategy 2: last anchor/button in the row (often the action button)
+    const allClickable = [...row.querySelectorAll('a, button, [role="button"]')];
+    if (allClickable.length > 0) {
+      allClickable[allClickable.length - 1].click();
+      return true;
+    }
+
+    return false;
+  }
+
+  function tryClick(keyword) {
+    const row = findAssignmentRow(keyword);
+    return row ? clickBlueArrowInRow(row) : false;
+  }
+
+  if (tryClick('<ASSIGNMENT KEYWORD>')) {
+    await d(3000);
+    return 'blue arrow clicked — no scroll needed';
+  }
+
+  for (let i = 0; i < 8; i++) {
+    window.scrollBy(0, 320);
+    await d(700);
+    if (tryClick('<ASSIGNMENT KEYWORD>')) {
+      await d(3000);
+      return 'blue arrow clicked after ' + (i + 1) + ' scroll(s)';
+    }
+  }
+
+  return 'assignment not found — take screenshot and ask user to confirm name';
+})()
+```
+
+Replace `<ASSIGNMENT KEYWORD>` with the chapter or assignment name (e.g. "chapter 5", "smartbook 5").
+
+**If the arrow click lands on a summary/overview page instead of questions:** look for a second blue arrow or "Begin" / "Continue" button on that page and click it before proceeding to Step 0d.
+
+If assignment still not found after scrolling: take a screenshot, show the user, and ask them to confirm the exact assignment name visible on screen.
+
+Wait 2–3 seconds for the SmartBook Welcome screen to load, then proceed to Step 0d.
+
+---
+
+### 0d — Start Questions (dismiss tips modal if present)
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+  [...document.querySelectorAll('button')]
+    .find(b => b.innerText.trim().toLowerCase().includes('start questions'))?.click();
+  await d(1500);
+  [...document.querySelectorAll('button')]
+    .find(b => b.innerText.trim().toLowerCase().includes('got it'))?.click();
+  await d(800);
+  return JSON.stringify({
+    title:    document.title,
+    progress: document.querySelector('[class*="concept"]')?.innerText?.trim(),
+    body:     document.body.innerText.substring(0, 400)
+  });
+})()
+```
+
+Confirm the title contains `"Question Mode"` before proceeding.
+
+---
+
+## Step 1 — Read the current question
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+  await d(200);
+  return JSON.stringify({
+    title:    document.title,
+    progress: document.querySelector('[class*="concept"]')?.innerText?.trim(),
+    body:     document.body.innerText.substring(0, 1800)
+  });
+})()
+```
+
+Parse `body` to extract:
+- **Progress** — `"N of 20 Concepts completed"`
+- **Type** — `Multiple Choice Question` / `True or False Question` / `Multiple Select Question`
+- **Stem** — the question text
+- **Options** — all answer choices
+
+Calculate target concepts from progress denominator:
+`target = Math.ceil(total × pct)` e.g. 65% of 20 = 13.
+
+---
+
+## Step 2 — Determine the correct answer(s)
+
+Use subject-matter knowledge to select the right answer(s). For Ch. 19
+Third-Party Rights topics see the **Quick Reference** at the bottom.
+
+For other chapters, apply standard legal/business principles from the stem.
+
+---
+
+## Step 3 — THE FAST-CHAIN CALL (one JS call per question)
+
+**Critical rule: fire this as ONE `javascript_tool` call. Never split into
+separate calls for select, confidence, and next.**
+
+```javascript
+(async () => {
+  const d = ms => new Promise(r => setTimeout(r, ms));
+
+  function clickOpt(t) {
+    const m = [...document.querySelectorAll('label.form-check-label')]
+      .find(l => l.innerText.toLowerCase().includes(t.toLowerCase()));
+    if (m) { const i = m.querySelector('input'); if (i) i.click(); else m.click(); }
+  }
+
+  // 1. SELECT ANSWER(S)
+  clickOpt('<partial text of correct answer>');
+  await d(150);
+  // clickOpt('<second answer if multiple-select>');
+  // await d(150);
+
+  // 2. HIGH CONFIDENCE
+  [...document.querySelectorAll('button')]
+    .find(b => b.innerText.trim().toLowerCase() === 'high')?.click();
+  await d(1800);
+
+  // 3. NEXT QUESTION
+  [...document.querySelectorAll('button')]
+    .find(b => b.innerText.trim().toLowerCase().includes('next'))?.click();
+  await d(1200);
+
+  // 4. RETURN PROGRESS + NEXT QUESTION BODY
+  return JSON.stringify({
+    progress: document.querySelector('[class*="concept"]')?.innerText?.trim(),
+    body:     document.body.innerText.substring(0, 1800)
+  });
+})()
+```
+
+**Timing — do not reduce these:**
+
+| Pause | Duration | Why |
+|-------|----------|-----|
+| Between multi-select clicks | 150 ms | React state update |
+| After High confidence click | 1800 ms | Answer-feedback animation |
+| After Next click | 1200 ms | Next question DOM load |
+
+---
+
+## Step 4 — Loop until target reached
+
+After each fast-chain call:
+1. Parse `progress` — e.g. `"13 of 20 Concepts completed"`
+2. If `completed >= target` → **stop and output the study key**
+3. Otherwise → read next question from `body`, determine answer, fire next
+   fast-chain call immediately
+
+**Never take a screenshot between questions.**
+**Never use `get_page_text` between questions.**
+Read everything from the `body` string returned by the previous JS call.
+
+---
+
+## Step 5 — Output: compact study-key table
+
+```markdown
+| Q# | Type  | Correct Answer |
+|----|-------|----------------|
+| Q1 | MCQ   | **Answer text** — one-line rationale |
+| Q2 | T/F   | **TRUE** — one-line rationale |
+| Q3 | Multi | **A & C** — one-line rationale |
+```
+
+Rules:
+- Answers only — do **not** re-state the full question
+- One-line rationale per row (≤ 12 words)
+- Mark wrong-then-corrected answers with *(re-queued)* if applicable
+
+---
+
+## Edge Cases
+
+| Situation | Fix |
+|-----------|-----|
+| `clickOpt` doesn't match | Widen partial text; use exact wording from `body` |
+| High button not clickable | Answer didn't register; re-click option, wait 300 ms, retry |
+| Progress didn't advance | Concept needs another correct answer; keep answering |
+| Page still shows "Answer Mode" | Previous Next didn't fire; click Next again |
+| Tips modal blocks Q1 | Click "Got It" in Step 0d |
+| "Courses" link not found in nav | Use fallback URL: `newconnect.mheducation.com/student/courses` |
+| Course not found in list | Take screenshot; ask user to confirm course name |
+| Assignment not visible on first screen | Scroll 320px up to 8 times before giving up |
+| Assignment still not found after scrolling | Screenshot; ask user to confirm exact assignment name |
+| Blue arrow click lands on summary page | Look for a second blue arrow / "Begin" / "Continue" button on that page and click it |
+| No arrow/icon button found in row | Fall back to last clickable element in the row; never click the assignment name text |
+| Sign In button not found on login page | Use attribute selectors as fallback; never ask the user to click it manually |
+| SSO / university redirect | Wait up to 15 s for SSO to complete; do NOT ask user to log in |
+| Autofill dropdown doesn't appear after `computer` click | Click the field again; wait 2 s; if still empty after 2 tries, take screenshot and ask user to click the email field once themselves to activate Chrome autofill, then resume |
+| CAPTCHA / bot detection | **Only exception**: tell user once, wait for solve, then resume |
+
+---
+
+## Subject-Matter Quick Reference — Ch. 19: Third-Party Rights
+
+| Concept | Answer pattern |
+|---------|----------------|
+| Transfer of **rights** | Assignment |
+| Transfer of **duties** | Delegation |
+| Receives rights | Assignee |
+| Gives away rights | Assignor |
+| Receives duties | Delegatee |
+| Gives away duties | Delegator |
+| Assignor after assignment | **No rights left** |
+| Delegator after delegation | **Still liable** if delegatee fails |
+| Personal-service contract | Non-assignable AND non-delegable |
+| Poorly-worded antiassignment clause | Unenforceable → assignment valid |
+| Right to receive **payment** | Always assignable even with antiassignment clause |
+| Obligor defenses after assignment | Survive — assertable against assignee |
+| Why assignee gives notice | So obligor knows **who to perform for** |
+| First-assignment-in-time (majority US) | First assignee in time wins |
+| English rule (minority US) | First to give **notice** wins |
+| Ambiguous "I assign the contract" | Court treats as **both rights AND duties** |
+| Intended beneficiary | Contract's purpose = benefit them; enforceable rights |
+| Incidental beneficiary | Unintended benefit; **no** enforceable rights |
+| Donee beneficiary | Benefits from a **gift** promise |
+| Creditor beneficiary | Contract meant to **discharge a debt** owed to them |
+| Promisor | Makes the promise benefiting third party |
+| Promisee | Owes promisor consideration in exchange |
+| Rights un-blockable by antiassignment clause | Right to receive payment; right to receive breach damages |
+| Non-delegable duties | Personal in nature; contractually forbidden |
+| Non-assignable rights | Personal; prohibited by contract; prohibited by law |
+| Vesting of beneficiary rights | Assents, brings suit, or materially relies |
+| Donee beneficiary definition T/F | **TRUE** — benefits from gift promise |
+| Delegator relieved after delegation T/F | **FALSE** — delegator stays liable |
+| Swapped donee/creditor definitions T/F | **FALSE** — definitions are reversed in the question |
