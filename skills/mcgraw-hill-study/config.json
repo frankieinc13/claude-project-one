@@ -1,0 +1,12 @@
+{
+  "courses": [
+    {
+      "name": "Business Law",
+      "nav_keyword": "Business Law"
+    },
+    {
+      "name": "Business Strategies",
+      "nav_keyword": "Business Strategies"
+    }
+  ]
+}
