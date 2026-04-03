@@ -9,14 +9,22 @@ Claude answers questions by reasoning directly from its own knowledge of Busines
 
 ## Running playwright-cli
 
-All commands go through the wrapper:
+**IMPORTANT: Never use `cmd /c pwcli.bat` — CMD intercepts `goto`, `type`, and other reserved keywords before they reach node.**
+
+Call node directly every time:
 ```bash
-cmd /c "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/pwcli.bat" [args]
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" [args]
 ```
 
 Use session name `mcgraw` for all commands after `open`:
 ```bash
-cmd /c "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/pwcli.bat" -s=mcgraw [command]
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw [command]
+```
+
+Define a shell variable to keep commands short:
+```bash
+PWCLI='"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js"'
+# Then use: eval "$PWCLI" -s=mcgraw [command]
 ```
 
 ## Credentials
@@ -40,71 +48,65 @@ Ask the user which course if not specified.
 
 ### 1. Open browser and navigate to course (with lazy login)
 
-Go directly to the section URL. If the session cookie is still valid, MHHE redirects to the course — no login page needed.
-
 ```bash
-# Restore session if saved (skip if first run)
-cmd /c pwcli.bat -s=mcgraw state-load "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/session.json"
+# 1a — Open browser (no URL yet)
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw open
 
-# Go straight to the section — bypasses login page entirely when session is valid
-cmd /c pwcli.bat -s=mcgraw goto "SECTION_URL"
+# 1b — Restore saved session cookies (must happen BEFORE navigation)
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw state-load "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/session.json"
 
-# Check where we landed
-cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({url: location.href, hasLoginForm: !!document.querySelector('#login-email')})"
+# 1c — Navigate using eval (NOT goto — CMD intercepts that keyword)
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "location.assign('SECTION_URL')"
+
+# 1d — Check where we landed
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "JSON.stringify({url: location.href, onLogin: location.href.includes('login')})"
 ```
 
-**If `hasLoginForm` is true** — session expired, log in now:
+**If `onLogin` is true** — session expired, log in now:
 ```bash
-cmd /c pwcli.bat -s=mcgraw fill "#login-email" "EMAIL"
-cmd /c pwcli.bat -s=mcgraw fill "#login-password" "PASSWORD"
-cmd /c pwcli.bat -s=mcgraw click "button[type=submit]"
-# Confirm redirect to course (not login page)
-cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({url: location.href})"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw snapshot
+# Use the ref for Email Address textbox (e.g. e40), Password textbox (e.g. e43), Sign In button (e.g. e53)
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw fill e40 "EMAIL"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw fill e43 "PASSWORD"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click e53
+# After login, navigate to the section
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "location.assign('SECTION_URL')"
 ```
 
-**If `hasLoginForm` is false** — already on course, continue to step 3.
+**If `onLogin` is false** — already on course, continue to step 3.
 
 ### 3. Find and open assignment
 
-**3a — Get assignment list + click target in one eval:**
+**3a — Get assignment list:**
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify([...document.querySelectorAll('[data-automation-id*=launch-btn],[aria-label*=Launch]')].map(e=>({text:e.closest('li,article')?.querySelector('h2,h3,[class*=title]')?.textContent?.trim()||e.textContent.trim(),id:e.getAttribute('data-automation-id')})).slice(0,30))"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "JSON.stringify([...document.querySelectorAll('[data-automation-id*=launch-btn],[aria-label*=Launch]')].map(function(e){return {text:(e.closest('li,article')||e).querySelector('h2,h3,[class*=title]') ? (e.closest('li,article')||e).querySelector('h2,h3,[class*=title]').textContent.trim() : e.textContent.trim(), id:e.getAttribute('data-automation-id')}}).slice(0,30))"
 ```
 
-From the returned list, identify the target by index (N). Then click + detect panel in a single eval — no separate click command needed:
+From the returned list, identify the target by index (N). Click it — wrap in IIFE since eval is a single expression:
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "
-  const btn = document.querySelectorAll('[data-automation-id*=launch-btn],[aria-label*=Launch]')[N];
-  btn?.click();
-  JSON.stringify({clicked: !!btn, label: btn?.textContent?.trim()})
-"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(function(){ var btn = document.querySelectorAll('[data-automation-id*=launch-btn],[aria-label*=Launch]')[N]; if(btn) btn.click(); return JSON.stringify({clicked: !!btn, label: btn ? btn.textContent.trim() : null}); })()"
 ```
 
-**3b — Wait for panel then click Continue/Begin in one eval:**
+**3b — Wait for panel then click Continue/Begin:**
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "
-  const b = [...document.querySelectorAll('button')].find(b => /Continue|Begin/i.test(b.textContent));
-  b?.click();
-  JSON.stringify({action: b?.textContent?.trim() || 'none'})
-"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(function(){ var b = Array.from(document.querySelectorAll('button')).find(function(b){ return /Continue|Begin/i.test(b.textContent); }); if(b) b.click(); return JSON.stringify({action: b ? b.textContent.trim() : 'none'}); })()"
 ```
 If `action` is `"none"`, wait 1s and retry once.
 
-**3c — Handle new tab + dismiss modals in one eval:**
+**3c — Handle new tab + dismiss modals:**
 
-First check tab count and page state together:
+Check tabs:
 ```bash
-cmd /c pwcli.bat -s=mcgraw tab-list
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw tab-list
 ```
-If tab index 1 exists, switch: `cmd /c pwcli.bat -s=mcgraw tab-select 1`
-
-Then dismiss any entry modals in a single eval:
+If tab index 1 exists, switch:
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "
-  const dismiss = [...document.querySelectorAll('button')].find(b => /Got it|Start Questions|Continue Questions/i.test(b.textContent));
-  dismiss?.click();
-  JSON.stringify({dismissed: dismiss?.textContent?.trim() || 'none', url: location.href})
-"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw tab-select 1
+```
+
+Dismiss entry modals:
+```bash
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(function(){ var b = Array.from(document.querySelectorAll('button')).find(function(b){ return /Got it|Start Questions|Continue Questions/i.test(b.textContent); }); if(b) b.click(); return JSON.stringify({dismissed: b ? b.textContent.trim() : 'none', url: location.href}); })()"
 ```
 If `dismissed` is `"none"` and URL contains `learning.mheducation.com`, questions are already visible — proceed to step 4.
 
@@ -119,7 +121,7 @@ Each iteration:
 
 **Step A — Read the question**
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "$(cat C:/Users/Owner/.cursor/skills/mcgraw-hill-study/get_question.js)"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "$(cat C:/Users/Owner/.cursor/skills/mcgraw-hill-study/get_question.js)"
 ```
 
 Returns structured JSON like:
@@ -146,32 +148,29 @@ Use your knowledge of the subject (Business Law / Business Strategies) to determ
 Click the correct option(s) by their label text:
 ```bash
 # Multiple choice — one answer
-cmd /c pwcli.bat -s=mcgraw click "Something of value exchanged between parties"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Something of value exchanged between parties"
 
 # Multiple select — click each correct option
-cmd /c pwcli.bat -s=mcgraw click "Option A"
-cmd /c pwcli.bat -s=mcgraw click "Option C"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Option A"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Option C"
 
 # True/False
-cmd /c pwcli.bat -s=mcgraw click "True"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "True"
 ```
 
-If clicking by text fails, use eval:
+If clicking by text fails, use eval with IIFE:
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "
-  [...document.querySelectorAll('label')]
-    .find(l => l.innerText.includes('OPTION_TEXT'))?.click()
-"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(function(){ var l = Array.from(document.querySelectorAll('label')).find(function(l){ return l.innerText.includes('OPTION_TEXT'); }); if(l) l.click(); return JSON.stringify({clicked: !!l}); })()"
 ```
 
 **Step C — Submit with High confidence**
 ```bash
-cmd /c pwcli.bat -s=mcgraw click "High"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "High"
 ```
 
 **Step D — Read feedback**
 ```bash
-cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({correct: !!document.querySelector('[class*=correct-answer],[aria-label*=correct],[class*=feedback-correct]'), incorrectMsg: document.querySelector('[class*=incorrect],[class*=feedback]')?.textContent?.trim()?.slice(0,300), explanation: document.querySelector('[class*=explanation],[class*=rationale]')?.textContent?.trim()?.slice(0,300), buttons: [...document.querySelectorAll('button')].map(b=>b.textContent.trim()).filter(t=>t)})"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "JSON.stringify({correct: !!document.querySelector('[class*=correct-answer],[aria-label*=correct],[class*=feedback-correct]'), incorrectMsg: document.querySelector('[class*=incorrect],[class*=feedback]') ? document.querySelector('[class*=incorrect],[class*=feedback]').textContent.trim().slice(0,300) : null, explanation: document.querySelector('[class*=explanation],[class*=rationale]') ? document.querySelector('[class*=explanation],[class*=rationale]').textContent.trim().slice(0,300) : null, buttons: Array.from(document.querySelectorAll('button')).map(function(b){return b.textContent.trim();}).filter(function(t){return t;})})"
 ```
 
 This returns whether the answer was correct plus any explanation text. Record:
@@ -186,7 +185,7 @@ This returns whether the answer was correct plus any explanation text. Record:
 
 **Step E — Next question**
 ```bash
-cmd /c pwcli.bat -s=mcgraw click "Next"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Next"
 ```
 
 **Exit conditions:**
@@ -195,13 +194,13 @@ cmd /c pwcli.bat -s=mcgraw click "Next"
 - Same `questionText[0]` appears 3 times in a row → click Next and continue
 - Check for completion page:
   ```bash
-  cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({done: !!document.querySelector('[class*=complete],[class*=finished]'), heading: document.querySelector('h1,h2')?.textContent?.trim()})"
+  "C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "JSON.stringify({done: !!document.querySelector('[class*=complete],[class*=finished]'), heading: document.querySelector('h1,h2') ? document.querySelector('h1,h2').textContent.trim() : null})"
   ```
 
 ### 5. Save session (optional)
 
 ```bash
-cmd /c pwcli.bat -s=mcgraw state-save "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/session.json"
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw state-save "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/session.json"
 ```
 
 ### 6. Save Word document
@@ -233,8 +232,9 @@ Print:
 
 | Problem | Fix |
 |---------|-----|
-| Login form not found | Take screenshot: `cmd /c pwcli.bat -s=mcgraw screenshot` |
-| Click by text fails | Use `eval` with `document.querySelector` |
+| Login form not found | Take screenshot: `"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw screenshot` |
+| Click by text fails | Use `eval` IIFE with `document.querySelector` |
 | Stuck on same question | Click Next 3x then skip |
 | New tab opened | Run `tab-list` then `tab-select` to switch |
 | SmartBook won't load | Check URL in snapshot — try `reload` |
+| eval SyntaxError | Wrap multi-statement code in `(function(){ ... })()` — eval must be a single expression |
