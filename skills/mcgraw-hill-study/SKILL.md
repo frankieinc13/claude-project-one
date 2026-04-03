@@ -38,63 +38,75 @@ Ask the user which course if not specified.
 
 ## Execution Steps
 
-### 1. Open browser and log in
+### 1. Open browser and navigate to course (with lazy login)
+
+Go directly to the section URL. If the session cookie is still valid, MHHE redirects to the course — no login page needed.
 
 ```bash
-# Open browser on login page
-cmd /c pwcli.bat open https://connect.mheducation.com
+# Restore session if saved (skip if first run)
+cmd /c pwcli.bat -s=mcgraw state-load "C:/Users/Owner/.cursor/skills/mcgraw-hill-study/session.json"
 
-# Take snapshot to confirm login form is visible
-cmd /c pwcli.bat -s=mcgraw snapshot
+# Go straight to the section — bypasses login page entirely when session is valid
+cmd /c pwcli.bat -s=mcgraw goto "SECTION_URL"
 
-# Fill credentials (replace with values from credentials.env)
+# Check where we landed
+cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({url: location.href, hasLoginForm: !!document.querySelector('#login-email')})"
+```
+
+**If `hasLoginForm` is true** — session expired, log in now:
+```bash
 cmd /c pwcli.bat -s=mcgraw fill "#login-email" "EMAIL"
 cmd /c pwcli.bat -s=mcgraw fill "#login-password" "PASSWORD"
 cmd /c pwcli.bat -s=mcgraw click "button[type=submit]"
-
-# Wait for dashboard — take snapshot to confirm
-cmd /c pwcli.bat -s=mcgraw snapshot
+# Confirm redirect to course (not login page)
+cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({url: location.href})"
 ```
 
-If already logged in (session cookie exists), the snapshot will show the dashboard — skip the fill/click steps.
-
-### 2. Navigate to course
-
-```bash
-cmd /c pwcli.bat -s=mcgraw goto "SECTION_URL"
-cmd /c pwcli.bat -s=mcgraw snapshot
-```
+**If `hasLoginForm` is false** — already on course, continue to step 3.
 
 ### 3. Find and open assignment
 
-1. Take a snapshot — the assignments list will show buttons with text like "Launch"
-2. Scroll to load all assignments if needed: `cmd /c pwcli.bat -s=mcgraw press End`
-3. Find the target assignment (user-specified, or first incomplete SmartBook)
-4. Click its launch button. Try clicking by aria-label text first:
-   ```bash
-   cmd /c pwcli.bat -s=mcgraw click "Launch ASSIGNMENT_NAME"
-   ```
-   If that fails, use eval to click by data-automation-id:
-   ```bash
-   cmd /c pwcli.bat -s=mcgraw eval "document.querySelector('[data-automation-id=\"launch-btn-0\"]')?.click()"
-   ```
-5. Snapshot — a side panel will open with a Continue/Begin button
-6. Click Continue or Begin:
-   ```bash
-   cmd /c pwcli.bat -s=mcgraw click "Continue"
-   # or
-   cmd /c pwcli.bat -s=mcgraw click "Begin"
-   ```
-7. If a new tab opens at `learning.mheducation.com`, switch to it:
-   ```bash
-   cmd /c pwcli.bat -s=mcgraw tab-list
-   cmd /c pwcli.bat -s=mcgraw tab-select 1
-   ```
-8. Click "Start Questions" or "Continue Questions" if visible
-9. Dismiss "Got it" tip modal if visible:
-   ```bash
-   cmd /c pwcli.bat -s=mcgraw click "Got it"
-   ```
+**3a — Get assignment list + click target in one eval:**
+```bash
+cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify([...document.querySelectorAll('[data-automation-id*=launch-btn],[aria-label*=Launch]')].map(e=>({text:e.closest('li,article')?.querySelector('h2,h3,[class*=title]')?.textContent?.trim()||e.textContent.trim(),id:e.getAttribute('data-automation-id')})).slice(0,30))"
+```
+
+From the returned list, identify the target by index (N). Then click + detect panel in a single eval — no separate click command needed:
+```bash
+cmd /c pwcli.bat -s=mcgraw eval "
+  const btn = document.querySelectorAll('[data-automation-id*=launch-btn],[aria-label*=Launch]')[N];
+  btn?.click();
+  JSON.stringify({clicked: !!btn, label: btn?.textContent?.trim()})
+"
+```
+
+**3b — Wait for panel then click Continue/Begin in one eval:**
+```bash
+cmd /c pwcli.bat -s=mcgraw eval "
+  const b = [...document.querySelectorAll('button')].find(b => /Continue|Begin/i.test(b.textContent));
+  b?.click();
+  JSON.stringify({action: b?.textContent?.trim() || 'none'})
+"
+```
+If `action` is `"none"`, wait 1s and retry once.
+
+**3c — Handle new tab + dismiss modals in one eval:**
+
+First check tab count and page state together:
+```bash
+cmd /c pwcli.bat -s=mcgraw tab-list
+```
+If tab index 1 exists, switch: `cmd /c pwcli.bat -s=mcgraw tab-select 1`
+
+Then dismiss any entry modals in a single eval:
+```bash
+cmd /c pwcli.bat -s=mcgraw eval "
+  const dismiss = [...document.querySelectorAll('button')].find(b => /Got it|Start Questions|Continue Questions/i.test(b.textContent));
+  dismiss?.click();
+  JSON.stringify({dismissed: dismiss?.textContent?.trim() || 'none', url: location.href})
+"
+```
+If `dismissed` is `"none"` and URL contains `learning.mheducation.com`, questions are already visible — proceed to step 4.
 
 ### 4. Answer questions — main loop
 
@@ -107,27 +119,25 @@ Each iteration:
 
 **Step A — Read the question**
 ```bash
-cmd /c pwcli.bat -s=mcgraw snapshot
+cmd /c pwcli.bat -s=mcgraw eval "$(cat C:/Users/Owner/.cursor/skills/mcgraw-hill-study/get_question.js)"
 ```
 
-The accessibility tree will show something like:
-```
-- heading "Multiple Choice Question"
-- text "What is consideration in contract law?"
-- radio "An offer made by one party"
-- radio "Something of value exchanged between parties"
-- radio "The acceptance of an offer"
-- radio "A written agreement"
-- button "High"
-- button "Medium"
-- button "Low"
-- button "Next"
+Returns structured JSON like:
+```json
+{
+  "heading": "Multiple Choice Question",
+  "questionText": ["What is consideration in contract law?"],
+  "options": ["An offer made by one party", "Something of value exchanged between parties", "The acceptance of an offer", "A written agreement"],
+  "checkboxes": [],
+  "buttons": ["High", "Medium", "Low", "Next"],
+  "progress": "Concept 3 of 12"
+}
 ```
 
-Extract:
-- **Question type** from heading: `multiple_choice`, `multiple_select`, `true_false`, `fill_blank`
-- **Question text**: the text node after the heading
-- **Options**: all radio/checkbox labels
+Derive:
+- **Question type**: heading contains `Multiple Choice` → `multiple_choice`, `Multiple Select` → `multiple_select`, `True/False` → `true_false`
+- **Question text**: `questionText[0]`
+- **Options**: `options` (radio) or `checkboxes` (multi-select)
 
 **Step B — Reason and answer**
 
@@ -161,10 +171,10 @@ cmd /c pwcli.bat -s=mcgraw click "High"
 
 **Step D — Read feedback**
 ```bash
-cmd /c pwcli.bat -s=mcgraw snapshot
+cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({correct: !!document.querySelector('[class*=correct-answer],[aria-label*=correct],[class*=feedback-correct]'), incorrectMsg: document.querySelector('[class*=incorrect],[class*=feedback]')?.textContent?.trim()?.slice(0,300), explanation: document.querySelector('[class*=explanation],[class*=rationale]')?.textContent?.trim()?.slice(0,300), buttons: [...document.querySelectorAll('button')].map(b=>b.textContent.trim()).filter(t=>t)})"
 ```
 
-The feedback snapshot will show whether the answer was correct and what the correct answer is. Record:
+This returns whether the answer was correct plus any explanation text. Record:
 ```json
 {
   "question": "...",
@@ -180,9 +190,13 @@ cmd /c pwcli.bat -s=mcgraw click "Next"
 ```
 
 **Exit conditions:**
-- Snapshot shows a completion message (e.g., "Assignment complete", "You finished")
-- No question text found in 3 consecutive snapshots → done
-- Same question text appears 3 times in a row → click Next and continue
+- Step A JSON has empty `questionText` and `options` for 3 consecutive calls → done
+- Step A JSON `buttons` contains "Finish" or "Done" → done
+- Same `questionText[0]` appears 3 times in a row → click Next and continue
+- Check for completion page:
+  ```bash
+  cmd /c pwcli.bat -s=mcgraw eval "JSON.stringify({done: !!document.querySelector('[class*=complete],[class*=finished]'), heading: document.querySelector('h1,h2')?.textContent?.trim()})"
+  ```
 
 ### 5. Save session (optional)
 

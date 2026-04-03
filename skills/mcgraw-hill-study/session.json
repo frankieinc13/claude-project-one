@@ -1,1 +1,392 @@
-{"cookies": [{"name": "JSESSIONID", "value": "ACC8A8EE377BADA42C7A75E9A267B6B1", "domain": "newconnect.mheducation.com", "path": "/openapi/paam/student/affiliation/47834359", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "JSESSIONID", "value": "C69D09974B0B0EFDB72348196479E8C0", "domain": "openapi.mheducation.com", "path": "/openapi/smartbuilder/v2/launch", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "JSESSIONID", "value": "ACC8A8EE377BADA42C7A75E9A267B6B1", "domain": "newconnect.mheducation.com", "path": "/openapi/paam/student", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "cache.sessionId", "value": "HZe80805dc37b34c16977ee986cb1beb44", "domain": "connect.mheducation.com", "path": "/connect/login", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Strict"}, {"name": "JSESSIONID", "value": "B3EEDCB967A4389F7CFE05DBB2828DB7", "domain": "connect.mheducation.com", "path": "/connect/login", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "None"}, {"name": "JSESSIONID", "value": "ACC8A8EE377BADA42C7A75E9A267B6B1", "domain": "newconnect.mheducation.com", "path": "/openapi/paam", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "_GRECAPTCHA", "value": "09AKhCRwjTZ77n-CsdlhJzcpSzmJdmnl3gvAue4p7MleH6WI51yxO3___m0x34g5aInI8ZbtHyGy8F-JwZU4dKSqk", "domain": "recaptcha.net", "path": "/recaptcha", "expires": 1790685982.215849, "httpOnly": true, "secure": true, "sameSite": "None"}, {"name": "JSESSION_SPARK_BRANDING_VARIANT_KEY", "value": "en_us_default_default", "domain": "connect.mheducation.com", "path": "/connect", "expires": -1, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "JSESSIONID", "value": "C69D09974B0B0EFDB72348196479E8C0", "domain": "openapi.mheducation.com", "path": "/openapi", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "SCHOOLID", "value": "eVdpTU9nZGFHL1k9", "domain": ".mheducation.com", "path": "/openapi", "expires": -1, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "JSESSIONID", "value": "ACC8A8EE377BADA42C7A75E9A267B6B1", "domain": "newconnect.mheducation.com", "path": "/openapi", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "JSESSIONID", "value": "B3EEDCB967A4389F7CFE05DBB2828DB7", "domain": "connect.mheducation.com", "path": "/connect", "expires": -1, "httpOnly": true, "secure": true, "sameSite": "Lax"}, {"name": "cache.sessionId", "value": "HZ29b445c303a64a49b0d5be99b2567d86", "domain": "connect.mheducation.com", "path": "/connect", "expires": -1, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "JSESSION_SPARK_BRAND_ID", "value": "\"\"", "domain": "connect.mheducation.com", "path": "/connect", "expires": -1, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "JSESSION_SPARK_UNIV_ID", "value": "\"\"", "domain": "connect.mheducation.com", "path": "/connect", "expires": -1, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "_gid", "value": "GA1.2.1758288445.1775111501", "domain": ".mheducation.com", "path": "/", "expires": 1775220371, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "c15FeatureFlags", "value": "{\"decomissionedAssignmentTypes\":[\"WRITING\",\"POWER_OF_PROCESS\"],\"isAdditionalInstructorFeatureEnabled\":\"true\"}", "domain": "newconnect.mheducation.com", "path": "/", "expires": -1, "httpOnly": false, "secure": true, "sameSite": "Lax"}, {"name": "_pendo_unsentEvents.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "", "domain": ".mheducation.com", "path": "/", "expires": -1, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_pendo_visitorId.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "urn%3Acom.mheducation.openlearning%3Aenterprise.identity%3Aprod.us-east-1%3Aperson%3Ada9e1e65-b0c4-46dc-b134-518358f88d99", "domain": ".mheducation.com", "path": "/", "expires": 1783773986, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_pendo_accountId.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "urn%3Acom.mheducation.openlearning%3Aenterprise.identity.organization%3Aprod.global%3Aorganization%3A7052fe41-3ac7-46c5-adf7-cd3fe2498ae5", "domain": ".mheducation.com", "path": "/", "expires": 1783773986, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_pendo___sg__.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "%7B%22visitormetadata%22%3A%7B%22agent__mh_environment%22%3A%22prod%22%2C%22agent__mh_platform%22%3A%22Connect%22%2C%22agent__orgid%22%3A%22urn%3Acom.mheducation.openlearning%3Aenterprise.identity.organization%3Aprod.global%3Aorganization%3A7052fe41-3ac7-46c5-adf7-cd3fe2498ae5%22%2C%22agent__personxid%22%3A%22urn%3Acom.mheducation.openlearning%3Aenterprise.identity%3Aprod.us-east-1%3Aperson%3Ada9e1e65-b0c4-46dc-b134-518358f88d99%22%2C%22agent__mh_sectionid%22%3A%22Section%20Not%20Applicable%22%2C%22agent__mh_coursedescriptor%22%3A%22ISBN%20Not%20Available%22%2C%22agent__mh_product%22%3A%22Product%20Not%20Available%22%2C%22agent__mh_subject%22%3A%22Discipline%20Not%20Available%22%7D%2C%22accountmetadata%22%3A%7B%22agent__name%22%3A%22FAIRFIELD%20UNIVERSITY%22%7D%7D", "domain": ".mheducation.com", "path": "/", "expires": 1783773986, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_pendo_utm.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "%7B%22channel%22%3A%22Referral%22%2C%22referrer%22%3A%22openapi.mheducation.com%22%7D", "domain": ".mheducation.com", "path": "/", "expires": 1783773986, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_pendo_guides_blocked.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "0", "domain": ".mheducation.com", "path": "/", "expires": 1775147246, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_pendo_meta.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "1358376964", "domain": ".mheducation.com", "path": "/", "expires": 1783773357, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "AWSALB", "value": "7s+AcnsfTZHRZRUkOm2zETPcXkQl+3N8hi2i5lkdIB08uPpplhBCx1zWvl51AfKQ9B8Ba45EQTRGzHSyVhgUFtm98xzYRB6Xe7+TaNzm2wSQSTRQPp6hf4/4QvMw", "domain": "connect.mheducation.com", "path": "/", "expires": 1775738769.709171, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "AWSALBCORS", "value": "7s+AcnsfTZHRZRUkOm2zETPcXkQl+3N8hi2i5lkdIB08uPpplhBCx1zWvl51AfKQ9B8Ba45EQTRGzHSyVhgUFtm98xzYRB6Xe7+TaNzm2wSQSTRQPp6hf4/4QvMw", "domain": "connect.mheducation.com", "path": "/", "expires": 1775738769.709424, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "_ga", "value": "GA1.2.1724895102.1775111501", "domain": ".mheducation.com", "path": "/", "expires": 1809693971.752103, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "_gat_UA-47123043-26", "value": "1", "domain": ".mheducation.com", "path": "/", "expires": 1775134031, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "_ga_6ESD786TCK", "value": "GS2.2.s1775132834$o2$g1$t1775133971$j60$l0$h0", "domain": ".mheducation.com", "path": "/", "expires": 1809693971.984, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "MH_TOKEN", "value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjI4MjAyMDgxNTciLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJoZWNsciIsImV4cCI6MTc3NTEzNDI3OCwianRpIjoiYWNlMmRiYmItOTdlMi00Y2I4LTg3MGUtOTUyODc3MjY0ZGQzIiwiaWF0IjoxNzc1MTMzOTc4LCJpc3MiOiJodHRwczovL3Rva2VuLm1oZWR1Y2F0aW9uLmNvbSIsIm5iZiI6MTc3NTEzMzk3OCwic3ViIjoiZGE5ZTFlNjUtYjBjNC00NmRjLWIxMzQtNTE4MzU4Zjg4ZDk5IiwidG9rZW5fdHlwZSI6ImJlYXJlciIsImV4cGlyZXNfaW4iOjMwMCwic2Vzc2lvbl90aW1lb3V0Ijo3ODAwLCJwZXJzb25feGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5pZGVudGl0eTpwcm9kLnVzLWVhc3QtMTpwZXJzb246ZGE5ZTFlNjUtYjBjNC00NmRjLWIxMzQtNTE4MzU4Zjg4ZDk5IiwidXNlcl9uYW1lIjoiZi5pbmN1dHRvLjEzIiwiZGVmYXVsdF9yb2xlIjoibGVhcm5lciIsInNlc3Npb25feGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5pZGVudGl0eTpwcm9kLnVzLWVhc3QtMTpzZXNzaW9uOjQwYmU3ZTkzLTdiNTAtNGQ0OC05MjEwLTZhNDMwYWRjOWVkNSIsInNlc3Npb25faWQiOiI0MGJlN2U5My03YjUwLTRkNDgtOTIxMC02YTQzMGFkYzllZDUiLCJjbGllbnRfeGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5sb2dpbi5oZWNscjpwcm9kLmdsb2JhbCIsImNsaWVudF9pZCI6ImhlY2xyIiwieGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5pZGVudGl0eTpwcm9kLnVzLWVhc3QtMTpwZXJzb246ZGE5ZTFlNjUtYjBjNC00NmRjLWIxMzQtNTE4MzU4Zjg4ZDk5Iiwic2NvcGUiOlsiYXV0aCJdLCJhdXRoZW50aWNhdGlvbl90eXBlIjoicGFzc3dvcmQifQ.WkWN4_5Ci-cnS_8PmoRxu99EdQghCfHoq-o_-nn45j0x2GNXpeSorLQc3UyCxNmH0eM7Dy8HjjP8IcO6ibPIF4j-AYRiqQSAMZ-P66AzRE7NRsUR4W4t8VERHAzx-sz3S_jOEDufGEJ7NoYEdAnDdSgjioSmGCR_M-_SATLNQA_z9bkVOMlp9_L4ZtT_LlspePhB7n69FC4SJhnRSqynT79qhwva2NHvV4yhB6YpTQwoqyUpeot6i54u7vFMs3QYx4mErgrE98NEkaMGo1JoZxQsCJxDwWSV3zGOxPuxwbdJXg74UluTJdJW753Xc9u7HkRJR1PEJVQCwPpFjsyKbw", "domain": ".mheducation.com", "path": "/", "expires": -1, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "ERIGHTS", "value": "47834359177513397905776132d0f3e3d495d8f3a39a504ead532", "domain": ".mheducation.com", "path": "/", "expires": -1, "httpOnly": false, "secure": true, "sameSite": "None"}, {"name": "USER_TRACKER", "value": "81f997c5-cd2f-41a3-bed3-632f97e73022-1775133979345", "domain": ".mheducation.com", "path": "/", "expires": -1, "httpOnly": false, "secure": true, "sameSite": "Lax"}, {"name": "_ga_PLHBV8JW7L", "value": "GS2.1.s1775132834$o2$g1$t1775133982$j49$l0$h0", "domain": ".mheducation.com", "path": "/", "expires": 1809693982.970428, "httpOnly": false, "secure": false, "sameSite": "Lax"}, {"name": "_pendo_sessionId.d873ab3e-a950-49ee-5f35-9533248a031c", "value": "%7B%22sessionId%22%3A%22rdAmXel3Uq05lIDq%22%2C%22timestamp%22%3A1775133986893%7D", "domain": ".mheducation.com", "path": "/", "expires": 1783773986, "httpOnly": false, "secure": true, "sameSite": "None"}], "origins": [{"origin": "https://newconnect.mheducation.com", "localStorage": [{"name": "ng2Idle.main.expiry", "value": "1775137704209"}, {"name": "loaderurl", "value": "https%3A%2F%2Fnewconnect.mheducation.com%2F%3Fname%3Dcontainer%26oauth_timestamp%3D1775133979%26custom_login_url%3Dhttps%253A%252F%252Fconnect.mheducation.com%252Fpaamweb%252Findex.html%2523%252Faccess%252Fhome%26default_heclr_url%3Dhttps%253A%252F%252Faccounts.mheducation.com%252Flogin%253Fapp%253Dnewconnect.mheducation.com%2526redirectUrl%253Dhttps%253A%252F%252Fcaas.mheducation.com%252Fcaas%252Fheclr%252FssoRedirect%26user_id%3D47834359%26consumer_id%3Dcontainer_caas%26hash%3Dc66945db08c6918a2f4176d5bc0d177d%26launch_native%3Dno"}, {"name": "ng2Idle.main.idling", "value": "false"}, {"name": "NRBA_SESSION", "value": "{\"value\":\"28b8bea6b34951d8\",\"inactiveAt\":1775134644323,\"expiresAt\":1775147244323,\"updatedAt\":1775132844621,\"sessionReplayMode\":0,\"sessionReplaySentFirstChunk\":false,\"sessionTraceMode\":0,\"traceHarvestStarted\":false,\"loggingMode\":2,\"serverTimeDiff\":3581,\"custom\":{},\"numOfResets\":0}"}]}, {"origin": "https://connect.mheducation.com", "localStorage": [{"name": "NRBA_SESSION", "value": "{\"value\":\"d70c170a0c377604\",\"inactiveAt\":1775134632756,\"expiresAt\":1775147232755,\"updatedAt\":1775133969993,\"sessionReplayMode\":0,\"sessionReplaySentFirstChunk\":false,\"sessionTraceMode\":0,\"traceHarvestStarted\":false,\"loggingMode\":0,\"logApiMode\":0,\"serverTimeDiff\":null,\"custom\":{},\"numOfResets\":0,\"consent\":false}"}]}, {"origin": "https://accounts.mheducation.com", "localStorage": [{"name": "NRBA_SESSION", "value": "{\"value\":\"e6735251550cbd86\",\"inactiveAt\":1775135781319,\"expiresAt\":1775147233469,\"updatedAt\":1775133982984,\"sessionReplayMode\":0,\"sessionReplaySentFirstChunk\":false,\"sessionTraceMode\":0,\"traceHarvestStarted\":false,\"loggingMode\":0,\"serverTimeDiff\":3478,\"custom\":{},\"numOfResets\":0}"}, {"name": "_grecaptcha", "value": "09AKhCRwhRgWzL0C5js5OpAc-LQoM1zEJu1eN8013iaY-3ObOO6LPIEQGOP-r2FOSmWtwA9ONCsvv1Jb41in97qnbrkGJecsc6OeR-0AyP62DBwe8Ca-imVT26wna57Aj7"}]}, {"origin": "https://recaptcha.net", "localStorage": [{"name": "rc::a", "value": "MWczbTZ2MzMwbTRwMw=="}, {"name": "rc::f", "value": "0aAMm6y2_hqfnCuYWb9tBHqzDWVSJAX_kkVPlKbmSAq4wu2Ae745EmUe9VNCQprpW0t_GSydU"}]}]}
+{
+  "cookies": [
+    {
+      "name": "JSESSIONID",
+      "value": "ACC8A8EE377BADA42C7A75E9A267B6B1",
+      "domain": "newconnect.mheducation.com",
+      "path": "/openapi/paam/student/affiliation/47834359",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "C69D09974B0B0EFDB72348196479E8C0",
+      "domain": "openapi.mheducation.com",
+      "path": "/openapi/smartbuilder/v2/launch",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "ACC8A8EE377BADA42C7A75E9A267B6B1",
+      "domain": "newconnect.mheducation.com",
+      "path": "/openapi/paam/student",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cache.sessionId",
+      "value": "HZe80805dc37b34c16977ee986cb1beb44",
+      "domain": "connect.mheducation.com",
+      "path": "/connect/login",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "CDBB81FDF9C3668AD41611F80B7AEF5F",
+      "domain": "connect.mheducation.com",
+      "path": "/connect/login",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "ACC8A8EE377BADA42C7A75E9A267B6B1",
+      "domain": "newconnect.mheducation.com",
+      "path": "/openapi/paam",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_GRECAPTCHA",
+      "value": "09AKhCRwg64l94IlFT0f-qJ67SwpViBghuKYO9d1VOWqntrnbeDe7dDsjFpRT8GUo8xvCMZ2bVwZG8xQbbPJJ7zYY",
+      "domain": "recaptcha.net",
+      "path": "/recaptcha",
+      "expires": 1790717874.10367,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "JSESSION_SPARK_BRANDING_VARIANT_KEY",
+      "value": "en_us_default_default",
+      "domain": "connect.mheducation.com",
+      "path": "/connect",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "C69D09974B0B0EFDB72348196479E8C0",
+      "domain": "openapi.mheducation.com",
+      "path": "/openapi",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "SCHOOLID",
+      "value": "eVdpTU9nZGFHL1k9",
+      "domain": ".mheducation.com",
+      "path": "/openapi",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "ACC8A8EE377BADA42C7A75E9A267B6B1",
+      "domain": "newconnect.mheducation.com",
+      "path": "/openapi",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "CDBB81FDF9C3668AD41611F80B7AEF5F",
+      "domain": "connect.mheducation.com",
+      "path": "/connect",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cache.sessionId",
+      "value": "HZ7e5061a65798424b91cf40b291fd264c",
+      "domain": "connect.mheducation.com",
+      "path": "/connect",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSION_SPARK_BRAND_ID",
+      "value": "\"\"",
+      "domain": "connect.mheducation.com",
+      "path": "/connect",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "JSESSION_SPARK_UNIV_ID",
+      "value": "\"\"",
+      "domain": "connect.mheducation.com",
+      "path": "/connect",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gid",
+      "value": "GA1.2.1758288445.1775111501",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1775252273,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "c15FeatureFlags",
+      "value": "{\"decomissionedAssignmentTypes\":[\"WRITING\",\"POWER_OF_PROCESS\"],\"isAdditionalInstructorFeatureEnabled\":\"true\"}",
+      "domain": "newconnect.mheducation.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_pendo_unsentEvents.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pendo_visitorId.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "urn%3Acom.mheducation.openlearning%3Aenterprise.identity%3Aprod.us-east-1%3Aperson%3Ada9e1e65-b0c4-46dc-b134-518358f88d99",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1783773986,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pendo_accountId.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "urn%3Acom.mheducation.openlearning%3Aenterprise.identity.organization%3Aprod.global%3Aorganization%3A7052fe41-3ac7-46c5-adf7-cd3fe2498ae5",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1783773986,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pendo___sg__.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "%7B%22visitormetadata%22%3A%7B%22agent__mh_environment%22%3A%22prod%22%2C%22agent__mh_platform%22%3A%22Connect%22%2C%22agent__orgid%22%3A%22urn%3Acom.mheducation.openlearning%3Aenterprise.identity.organization%3Aprod.global%3Aorganization%3A7052fe41-3ac7-46c5-adf7-cd3fe2498ae5%22%2C%22agent__personxid%22%3A%22urn%3Acom.mheducation.openlearning%3Aenterprise.identity%3Aprod.us-east-1%3Aperson%3Ada9e1e65-b0c4-46dc-b134-518358f88d99%22%2C%22agent__mh_sectionid%22%3A%22Section%20Not%20Applicable%22%2C%22agent__mh_coursedescriptor%22%3A%22ISBN%20Not%20Available%22%2C%22agent__mh_product%22%3A%22Product%20Not%20Available%22%2C%22agent__mh_subject%22%3A%22Discipline%20Not%20Available%22%7D%2C%22accountmetadata%22%3A%7B%22agent__name%22%3A%22FAIRFIELD%20UNIVERSITY%22%7D%7D",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1783773986,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pendo_utm.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "%7B%22channel%22%3A%22Referral%22%2C%22referrer%22%3A%22openapi.mheducation.com%22%7D",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1783773986,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pendo_meta.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "1358376964",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1783773357,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pendo_sessionId.d873ab3e-a950-49ee-5f35-9533248a031c",
+      "value": "%7B%22sessionId%22%3A%22rdAmXel3Uq05lIDq%22%2C%22timestamp%22%3A1775133986893%7D",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1783773986,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_gat_UA-47123043-26",
+      "value": "1",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1775165888,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AWSALB",
+      "value": "0FglT/56b7YdF1aMNyiSqYl3OuIPgQ+RG5K8TSjBbcMiiX84pHmbOX32hqN+/WpHHBTepFtxcgPCO29hv5zf2ReujlXUYpaGmHFNrqu0plA6Sy9eTSlwp9CUefir",
+      "domain": "connect.mheducation.com",
+      "path": "/",
+      "expires": 1775770671.020286,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AWSALBCORS",
+      "value": "0FglT/56b7YdF1aMNyiSqYl3OuIPgQ+RG5K8TSjBbcMiiX84pHmbOX32hqN+/WpHHBTepFtxcgPCO29hv5zf2ReujlXUYpaGmHFNrqu0plA6Sy9eTSlwp9CUefir",
+      "domain": "connect.mheducation.com",
+      "path": "/",
+      "expires": 1775770671.02079,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.2.1724895102.1775111501",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1809725873.141163,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_6ESD786TCK",
+      "value": "GS2.2.s1775165484$o3$g1$t1775165873$j16$l0$h0",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1809725873.385025,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "MH_TOKEN",
+      "value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjI4MjAyMDgxNTciLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJoZWNsciIsImV4cCI6MTc3NTE2NjE3MywianRpIjoiMzRjZjZiM2ItZDg0Mi00ZmMzLWIyMWYtNmEwNzllZTY2ZmI5IiwiaWF0IjoxNzc1MTY1ODczLCJpc3MiOiJodHRwczovL3Rva2VuLm1oZWR1Y2F0aW9uLmNvbSIsIm5iZiI6MTc3NTE2NTg3Mywic3ViIjoiZGE5ZTFlNjUtYjBjNC00NmRjLWIxMzQtNTE4MzU4Zjg4ZDk5IiwidG9rZW5fdHlwZSI6ImJlYXJlciIsImV4cGlyZXNfaW4iOjMwMCwic2Vzc2lvbl90aW1lb3V0Ijo3ODAwLCJwZXJzb25feGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5pZGVudGl0eTpwcm9kLnVzLWVhc3QtMTpwZXJzb246ZGE5ZTFlNjUtYjBjNC00NmRjLWIxMzQtNTE4MzU4Zjg4ZDk5IiwidXNlcl9uYW1lIjoiZi5pbmN1dHRvLjEzIiwiZGVmYXVsdF9yb2xlIjoibGVhcm5lciIsInNlc3Npb25feGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5pZGVudGl0eTpwcm9kLnVzLWVhc3QtMTpzZXNzaW9uOjViMjJkNGZmLWFiNWYtNDMzOC05NDFkLTFmNTU0MTQ3YTIwMCIsInNlc3Npb25faWQiOiI1YjIyZDRmZi1hYjVmLTQzMzgtOTQxZC0xZjU1NDE0N2EyMDAiLCJjbGllbnRfeGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5sb2dpbi5oZWNscjpwcm9kLmdsb2JhbCIsImNsaWVudF9pZCI6ImhlY2xyIiwieGlkIjoidXJuOmNvbS5taGVkdWNhdGlvbi5vcGVubGVhcm5pbmc6ZW50ZXJwcmlzZS5pZGVudGl0eTpwcm9kLnVzLWVhc3QtMTpwZXJzb246ZGE5ZTFlNjUtYjBjNC00NmRjLWIxMzQtNTE4MzU4Zjg4ZDk5Iiwic2NvcGUiOlsiYXV0aCJdLCJhdXRoZW50aWNhdGlvbl90eXBlIjoicGFzc3dvcmQifQ.VLaiNPPrZFyjZ1TIv85hUnH_4iwhi0t8avPdRxjx_MbgjkyIXps4HNTArC6LE4sBwHeNay-gI8n1SnGu8akrOuIN7YK0p7s36MWPft0v3_VLDGTpghX7AnRJFgh-5zu5IMSXMvmkPWq7ZtnL3n_dCW0wuCQi4DmbyQxb3-xOuu96h8MXy9ewKAJwTEPTHgyNb1ok2d7zSIjADvHRjvcq128viZsO3uKKTxydBkiAuiDkjw5GoWjlW2qjfZjUldHyRz6R_JL3UBpGRwzW72g4qi_sAdwsTsj-vOunQFQC_7AUdd_LejPfcKzacLy1ehg-z8ZbR2GGPQ2oirlhCyjKFA",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ERIGHTS",
+      "value": "478343591775165873676d274cdeb4a6e4be5b106f24465cb2446",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "USER_TRACKER",
+      "value": "7ea192ce-7e97-4acf-bff1-6b2686115a31-1775165873823",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_PLHBV8JW7L",
+      "value": "GS2.1.s1775165484$o3$g1$t1775165874$j14$l0$h0",
+      "domain": ".mheducation.com",
+      "path": "/",
+      "expires": 1809725874.659573,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://newconnect.mheducation.com",
+      "localStorage": [
+        {
+          "name": "ng2Idle.main.expiry",
+          "value": "1775169595783"
+        },
+        {
+          "name": "loaderurl",
+          "value": "https%3A%2F%2Fnewconnect.mheducation.com%2F%3Fname%3Dcontainer%26oauth_timestamp%3D1775165873%26custom_login_url%3Dhttps%253A%252F%252Fconnect.mheducation.com%252Fpaamweb%252Findex.html%2523%252Faccess%252Fhome%26default_heclr_url%3Dhttps%253A%252F%252Faccounts.mheducation.com%252Flogin%253Fapp%253Dnewconnect.mheducation.com%2526redirectUrl%253Dhttps%253A%252F%252Fcaas.mheducation.com%252Fcaas%252Fheclr%252FssoRedirect%26user_id%3D47834359%26consumer_id%3Dcontainer_caas%26hash%3D5ac3c5654436cbd410e92a90fc01fd89%26launch_native%3Dno"
+        },
+        {
+          "name": "ng2Idle.main.idling",
+          "value": "false"
+        },
+        {
+          "name": "NRBA_SESSION",
+          "value": "{\"value\":\"bbc9dfb478c3902c\",\"inactiveAt\":1775167462114,\"expiresAt\":1775180062113,\"updatedAt\":1775165662115,\"sessionReplayMode\":0,\"sessionReplaySentFirstChunk\":false,\"sessionTraceMode\":0,\"traceHarvestStarted\":false,\"loggingMode\":0,\"serverTimeDiff\":null,\"custom\":{},\"numOfResets\":0}"
+        }
+      ]
+    },
+    {
+      "origin": "https://connect.mheducation.com",
+      "localStorage": [
+        {
+          "name": "NRBA_SESSION",
+          "value": "{\"value\":\"04bd916c1d6bf4f1\",\"inactiveAt\":1775167282275,\"expiresAt\":1775179882275,\"updatedAt\":1775165871290,\"sessionReplayMode\":0,\"sessionReplaySentFirstChunk\":false,\"sessionTraceMode\":0,\"traceHarvestStarted\":false,\"loggingMode\":0,\"logApiMode\":0,\"serverTimeDiff\":695,\"custom\":{},\"numOfResets\":0,\"consent\":false}"
+        }
+      ]
+    },
+    {
+      "origin": "https://accounts.mheducation.com",
+      "localStorage": [
+        {
+          "name": "NRBA_SESSION",
+          "value": "{\"value\":\"c83a07ae3bc804fd\",\"inactiveAt\":1775167673235,\"expiresAt\":1775179884196,\"updatedAt\":1775165874675,\"sessionReplayMode\":0,\"sessionReplaySentFirstChunk\":false,\"sessionTraceMode\":0,\"traceHarvestStarted\":false,\"loggingMode\":0,\"serverTimeDiff\":754,\"custom\":{},\"numOfResets\":0}"
+        },
+        {
+          "name": "_grecaptcha",
+          "value": "09AKhCRwgtfhvgr54ErrEkCvi6qi26IqEoIPUXB1wemk4PMeiUg_2mwdRvptiI-_27uiUSfpLkryoxVQpa5aK5SC6GforuVEkptp0En_Vciw5NZU6DGtYXEpezG4l6EBZr"
+        }
+      ]
+    },
+    {
+      "origin": "https://recaptcha.net",
+      "localStorage": [
+        {
+          "name": "rc::a",
+          "value": "MWczbTZ2MzMwbTRwMw=="
+        },
+        {
+          "name": "rc::f",
+          "value": "0aAMm6y29Nc3KEeVm6NR66Ldimyq8zL92SeH2xyJFJkHw_It27SqHQCrtgtrVj6pkrqFRTmk8"
+        }
+      ]
+    }
+  ]
+}

@@ -7,5 +7,7 @@
     "shell",
     "update-cursor-settings"
   ],
-  "managedSkillIds": []
+  "managedSkillIds": [
+    "babysit"
+  ]
 }
