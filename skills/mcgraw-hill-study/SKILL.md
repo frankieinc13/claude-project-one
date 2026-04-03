@@ -143,37 +143,26 @@ Derive:
 
 **Step B — Reason and answer**
 
-Use your knowledge of the subject (Business Law / Business Strategies) to determine the correct answer. Do not guess — reason carefully. SmartBook re-queues wrong answers.
+Use your knowledge of the subject to determine the correct answer. Do not guess — SmartBook re-queues wrong answers.
 
-Click the correct option(s) by their label text:
+**Step C — Select answer + submit High + advance to next question (one async eval)**
+
+This single call clicks the answer, clicks High, waits for "Next Question" to appear (polls every 100ms, 4s timeout), clicks it, and returns:
+
 ```bash
-# Multiple choice — one answer
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Something of value exchanged between parties"
+# Single answer (multiple choice or true/false) — replace ANSWER_TEXT
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(async function(){ var l = Array.from(document.querySelectorAll('label,[role=radio]')).find(function(l){ return l.innerText && l.innerText.includes('ANSWER_TEXT'); }); if(l) l.click(); await new Promise(function(r){ setTimeout(r,300); }); var h = Array.from(document.querySelectorAll('button')).find(function(b){ return b.textContent.trim()==='High'; }); if(h) h.click(); var next = await new Promise(function(resolve){ var t=Date.now(); var iv=setInterval(function(){ var b=Array.from(document.querySelectorAll('button')).find(function(b){ return /Next Question/i.test(b.textContent); }); if(b||Date.now()-t>4000){ clearInterval(iv); resolve(b||null); } },100); }); if(next) next.click(); return JSON.stringify({answered:!!l,high:!!h,advanced:!!next}); })()"
 
-# Multiple select — click each correct option
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Option A"
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Option C"
+# Multiple select — replace OPTION_A, OPTION_C with actual answer texts
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(async function(){ var answers=['OPTION_A','OPTION_C']; answers.forEach(function(txt){ var l=Array.from(document.querySelectorAll('label,[role=checkbox]')).find(function(l){ return l.innerText&&l.innerText.includes(txt); }); if(l) l.click(); }); await new Promise(function(r){ setTimeout(r,300); }); var h=Array.from(document.querySelectorAll('button')).find(function(b){ return b.textContent.trim()==='High'; }); if(h) h.click(); var next=await new Promise(function(resolve){ var t=Date.now(); var iv=setInterval(function(){ var b=Array.from(document.querySelectorAll('button')).find(function(b){ return /Next Question/i.test(b.textContent); }); if(b||Date.now()-t>4000){ clearInterval(iv); resolve(b||null); } },100); }); if(next) next.click(); return JSON.stringify({high:!!h,advanced:!!next}); })()"
 
-# True/False
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "True"
+# Fill-in-blank — clear field first so React detects change, then fill, then submit
+"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(async function(){ var inp=document.getElementById('fitbTesting_response0'); if(inp){ var setter=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set; setter.call(inp,''); inp.dispatchEvent(new Event('input',{bubbles:true})); } return JSON.stringify({cleared:!!inp}); })()" && "C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw fill "Field 1 of" "ANSWER_TEXT" && "C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(async function(){ var h=Array.from(document.querySelectorAll('button')).find(function(b){ return b.textContent.trim()==='High'&&!b.disabled; }); if(h) h.click(); var next=await new Promise(function(resolve){ var t=Date.now(); var iv=setInterval(function(){ var b=Array.from(document.querySelectorAll('button')).find(function(b){ return /Next Question/i.test(b.textContent); }); if(b||Date.now()-t>4000){ clearInterval(iv); resolve(b||null); } },100); }); if(next) next.click(); return JSON.stringify({high:!!h,advanced:!!next}); })()"
 ```
 
-If clicking by text fails, use eval with IIFE:
-```bash
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "(function(){ var l = Array.from(document.querySelectorAll('label')).find(function(l){ return l.innerText.includes('OPTION_TEXT'); }); if(l) l.click(); return JSON.stringify({clicked: !!l}); })()"
-```
+If `advanced` is `false`, the Next Question button never appeared — take a snapshot to investigate.
 
-**Step C — Submit with High confidence**
-```bash
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "High"
-```
-
-**Step D — Read feedback**
-```bash
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw eval "JSON.stringify({correct: !!document.querySelector('[class*=correct-answer],[aria-label*=correct],[class*=feedback-correct]'), incorrectMsg: document.querySelector('[class*=incorrect],[class*=feedback]') ? document.querySelector('[class*=incorrect],[class*=feedback]').textContent.trim().slice(0,300) : null, explanation: document.querySelector('[class*=explanation],[class*=rationale]') ? document.querySelector('[class*=explanation],[class*=rationale]').textContent.trim().slice(0,300) : null, buttons: Array.from(document.querySelectorAll('button')).map(function(b){return b.textContent.trim();}).filter(function(t){return t;})})"
-```
-
-This returns whether the answer was correct plus any explanation text. Record:
+Record each question as you go (no feedback check step needed):
 ```json
 {
   "question": "...",
@@ -181,11 +170,6 @@ This returns whether the answer was correct plus any explanation text. Record:
   "correct_answer": "...",
   "explanation": "one sentence why"
 }
-```
-
-**Step E — Next question**
-```bash
-"C:/Program Files/nodejs/node.exe" "C:/Users/Owner/AppData/Roaming/npm/node_modules/@playwright/cli/playwright-cli.js" -s=mcgraw click "Next"
 ```
 
 **Exit conditions:**
