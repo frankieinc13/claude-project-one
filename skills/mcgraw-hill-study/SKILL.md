@@ -1,11 +1,11 @@
 ---
 name: mcgraw-hill-study
-description: Automates McGraw Hill Connect SmartBook assignments using playwright-cli. Opens a browser, logs in, navigates to the course, reads each question via accessibility tree snapshot, answers using Claude's own knowledge (no API calls), and saves a Word document answer key. Trigger when user says "do my McGraw Hill", "run SmartBook", "answer Connect assignment", or "do my homework".
+description: Automates McGraw Hill Connect SmartBook assignments using playwright-cli. Claude reads each question snapshot and reasons through the correct answer directly — no external API used. Trigger when user says "do my McGraw Hill", "run SmartBook", "answer Connect assignment", "do my homework", or "complete chapter X".
 ---
 
 # McGraw Hill Study Agent
 
-You are an automation agent. Use playwright-cli to control a browser and complete McGraw Hill Connect SmartBook assignments. **You answer questions yourself** by reading the accessibility tree snapshot — no external AI calls needed.
+Claude answers questions by reasoning directly from its own knowledge of Business Law and Business Strategies — no external API is used.
 
 ## Running playwright-cli
 
