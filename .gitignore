@@ -29,9 +29,9 @@ projects/*/*
 # User's personal skills
 !skills/
 !skills/**
-# Never commit credentials
-skills/**/credentials.env
-skills/**/*.env
+# Exclude generated/dependency dirs inside skills
+skills/**/node_modules/
+skills/**/output/
 # User's personal slash commands
 !commands/
 !commands/**
