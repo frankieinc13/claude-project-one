@@ -8,6 +8,9 @@
     "update-cursor-settings"
   ],
   "managedSkillIds": [
-    "babysit"
+    "babysit",
+    "create-hook",
+    "statusline",
+    "update-cli-config"
   ]
 }
