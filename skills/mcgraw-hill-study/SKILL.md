@@ -38,7 +38,7 @@ Read `C:/Users/Owner/.cursor/skills/mcgraw-hill-study/credentials.env` directly 
 | Course | Section URL |
 |--------|-------------|
 | Business Law | https://newconnect.mheducation.com/student/class/section/153531117 |
-| Business Strategies | https://newconnect.mheducation.com/student/class/section/145520378 |
+| Business Strategies | https://newconnect.mheducation.com/student/class/section/154228371 |
 
 Ask the user which course if not specified.
 
