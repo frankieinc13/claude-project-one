@@ -215,59 +215,59 @@ Output format: one keyword per line, nothing else."""
 def build_channel_rows(youtube, video_stats: dict, channel_cache: dict,
                        args, now: datetime) -> list[dict]:
     """
-    Per qualifying Short, fetch channel's recent Shorts health.
-    Returns one row per *channel* (best Short per channel).
+    Groups already-fetched videos by channel and computes health from that data.
+    No additional API calls — channel health uses the videos we already have.
+    Returns one row per channel (best Short per channel).
     """
-    channel_best: dict[str, dict] = {}
-
+    # Group all Shorts by channel
+    channel_videos: dict[str, list] = {}
     for vid, v in video_stats.items():
-        if v["duration_s"] > 70:
+        if v["duration_s"] > 70 or v["duration_s"] == 0:
             continue
-        subs = channel_cache.get(v["channel_id"], 0)
+        cid = v["channel_id"]
+        channel_videos.setdefault(cid, []).append((vid, v))
+
+    print(f"  {len(channel_videos)} unique candidate channels. Computing health from fetched data...")
+
+    rows = []
+    for cid, vid_list in channel_videos.items():
+        subs = channel_cache.get(cid, 0)
         if subs > args.max_subs:
             continue
-        if v["views"] < args.min_views:
+
+        # Best Short = highest views
+        vid_list.sort(key=lambda x: x[1]["views"], reverse=True)
+        best_vid, best_v = vid_list[0]
+
+        if best_v["views"] < args.min_views:
             continue
-        ratio = v["views"] / max(subs, 1000)
+        ratio = best_v["views"] / max(subs, 1000)
         if ratio < args.min_ratio:
             continue
 
-        age_bonus = recency_bonus(v["published"], now)
-        cid = v["channel_id"]
-
-        if cid not in channel_best or v["views"] > channel_best[cid]["views"]:
-            channel_best[cid] = {
-                "video_id": vid,
-                "title": v["title"],
-                "channel_id": cid,
-                "channel_title": v["channel_title"],
-                "views": v["views"],
-                "subs": subs,
-                "outlier_ratio": round(ratio, 1),
-                "published": v["published"][:10],
-                "age_bonus": age_bonus,
-                "url": f"https://www.youtube.com/shorts/{vid}",
-                "description": v["description"].replace("\n", " "),
-            }
-
-    if not channel_best:
-        return []
-
-    print(f"  {len(channel_best)} unique candidate channels. Fetching channel health...")
-
-    rows = []
-    for cid, row in channel_best.items():
-        recent = fetch_channel_recent_shorts(youtube, cid, limit=10)
-        health = channel_health(recent)
+        age_bonus = recency_bonus(best_v["published"], now)
+        health = channel_health([v for _, v in vid_list])
 
         if health["trend_slope"] < 0 and health["shorts_count"] >= 3:
             continue  # declining channel
 
-        row["avg_views_per_short"] = round(health["avg_views"])
-        row["trend_slope"] = round(health["trend_slope"])
-        row["shorts_count"] = health["shorts_count"]
-        row["latest_published"] = health["latest_published"]
-        rows.append(row)
+        rows.append({
+            "video_id": best_vid,
+            "title": best_v["title"],
+            "channel_id": cid,
+            "channel_title": best_v["channel_title"],
+            "views": best_v["views"],
+            "subs": subs,
+            "outlier_ratio": round(ratio, 1),
+            "published": best_v["published"][:10],
+            "age_bonus": age_bonus,
+            "url": f"https://www.youtube.com/shorts/{best_vid}",
+            "description": best_v["description"].replace("\n", " "),
+            "avg_views_per_short": round(health["avg_views"]),
+            "trend_slope": round(health["trend_slope"]),
+            "shorts_count": health["shorts_count"],
+            "latest_published": health["latest_published"],
+        })
 
     if not rows:
         return []
