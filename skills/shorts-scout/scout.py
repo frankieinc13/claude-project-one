@@ -18,6 +18,9 @@ import numpy as np
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 import anthropic
+from docx import Document
+from docx.shared import Pt, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 SKILL_DIR = Path(__file__).parent
 load_dotenv(SKILL_DIR / "credentials.env")
@@ -342,6 +345,54 @@ Respond in clean markdown. One H2 section per niche. Be specific and concrete.""
 # Output
 # ---------------------------------------------------------------------------
 
+def markdown_to_docx(md_text: str, out_path: Path):
+    """Convert the markdown niche report to a formatted Word document."""
+    doc = Document()
+
+    # Default body font
+    style = doc.styles["Normal"]
+    style.font.name = "Calibri"
+    style.font.size = Pt(11)
+
+    for line in md_text.splitlines():
+        line = line.rstrip()
+
+        if line.startswith("### "):
+            p = doc.add_heading(line[4:], level=3)
+        elif line.startswith("## "):
+            p = doc.add_heading(line[3:], level=2)
+        elif line.startswith("# "):
+            p = doc.add_heading(line[2:], level=1)
+        elif line.startswith("---"):
+            doc.add_paragraph("─" * 60)
+        elif line.startswith("> "):
+            p = doc.add_paragraph(line[2:], style="Quote")
+        elif line.startswith("| "):
+            # Table row — collect consecutive rows then build table
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            # Store for batch table building below (handled after loop)
+            doc.add_paragraph("\t".join(cells))
+        elif line.startswith("- "):
+            doc.add_paragraph(line[2:], style="List Bullet")
+        elif line.startswith("**") and line.endswith("**"):
+            p = doc.add_paragraph()
+            run = p.add_run(line.strip("*"))
+            run.bold = True
+        elif line == "":
+            doc.add_paragraph("")
+        else:
+            # Handle inline bold (**text**) within a paragraph
+            p = doc.add_paragraph()
+            parts = re.split(r"(\*\*[^*]+\*\*)", line)
+            for part in parts:
+                if part.startswith("**") and part.endswith("**"):
+                    p.add_run(part[2:-2]).bold = True
+                else:
+                    p.add_run(part)
+
+    doc.save(out_path)
+
+
 def save_outputs(rows: list[dict], niches_report: str, outlier_rows: list[dict],
                  out_dir: Path):
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -369,10 +420,14 @@ def save_outputs(rows: list[dict], niches_report: str, outlier_rows: list[dict],
             writer.writerows(outlier_rows)
         print(f"Outliers CSV: {out_path}")
 
-    # niches.md
+    # niches.md (kept for reference)
     niches_path = out_dir / "niches.md"
     niches_path.write_text(niches_report, encoding="utf-8")
-    print(f"Niches report: {niches_path}")
+
+    # niches.docx — primary deliverable
+    docx_path = out_dir / "niches.docx"
+    markdown_to_docx(niches_report, docx_path)
+    print(f"Niches report (Word): {docx_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -464,7 +519,7 @@ def main():
     save_outputs(rows, niches_report, outlier_rows, out_dir)
 
     print("\n--- NICHE REPORT ---")
-    print(niches_report)
+    print(niches_report.encode(sys.stdout.encoding, errors="replace").decode(sys.stdout.encoding))
 
 
 if __name__ == "__main__":
