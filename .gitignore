@@ -29,6 +29,13 @@ projects/*/*
 # User's personal skills
 !skills/
 !skills/**
+# Never commit credentials or secrets from any skill
+skills/**/credentials.env
+skills/**/.env
+skills/**/*.env
+skills/**/secrets.*
+skills/**/api_keys.*
+skills/**/apikeys.*
 # Exclude generated/dependency dirs inside skills
 skills/**/node_modules/
 skills/**/output/
