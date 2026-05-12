@@ -91,20 +91,39 @@ def fetch_channel_subs(youtube, channel_ids: list[str], cache: dict) -> dict:
 
 
 def fetch_channel_recent_shorts(youtube, channel_id: str, limit: int = 10) -> list[dict]:
-    """Return stats for the most recent `limit` Shorts from a channel."""
-    resp = youtube.search().list(
-        part="id",
-        channelId=channel_id,
-        type="video",
-        videoDuration="short",
-        order="date",
-        maxResults=limit,
-    ).execute()
-    video_ids = [item["id"]["videoId"] for item in resp.get("items", [])]
+    """Return stats for the most recent `limit` Shorts from a channel.
+
+    Uses playlistItems.list (1 quota unit) instead of search.list (100 units).
+    Uploads playlist ID = channel ID with 'UC' replaced by 'UU'.
+    """
+    uploads_playlist = "UU" + channel_id[2:]
+    video_ids = []
+    page_token = None
+    # Fetch 4× limit since not every upload is a Short
+    target = limit * 4
+
+    while len(video_ids) < target:
+        kwargs = dict(
+            part="contentDetails",
+            playlistId=uploads_playlist,
+            maxResults=min(50, target - len(video_ids)),
+        )
+        if page_token:
+            kwargs["pageToken"] = page_token
+        resp = youtube.playlistItems().list(**kwargs).execute()
+        for item in resp.get("items", []):
+            video_ids.append(item["contentDetails"]["videoId"])
+        page_token = resp.get("nextPageToken")
+        if not page_token:
+            break
+
     if not video_ids:
         return []
+
     stats = fetch_video_stats(youtube, video_ids)
-    return list(stats.values())
+    shorts = [v for v in stats.values() if 0 < v["duration_s"] <= 70]
+    shorts.sort(key=lambda v: v["published"], reverse=True)
+    return shorts[:limit]
 
 
 # ---------------------------------------------------------------------------
