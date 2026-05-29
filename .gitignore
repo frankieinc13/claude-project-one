@@ -51,3 +51,8 @@ skills/**/output/
 # User-level cursor rules
 !rules/
 !rules/**
+# Gmail MCP server
+!gmail-mcp/
+!gmail-mcp/**
+gmail-mcp/credentials.json
+gmail-mcp/token.json
